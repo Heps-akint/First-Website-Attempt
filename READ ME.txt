@@ -1,0 +1,3 @@
+Type this link into your URL once you are on the Apache server.
+
+http://localhost/Coursework/practical 6/session2.php

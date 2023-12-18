@@ -1,0 +1,366 @@
+<html>
+
+<head>
+  <title>Homepage</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="weather.css">
+</head>
+
+<script src="dailyweatherdata.js"></script>
+<script src="weatherforecast.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"
+  integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<style>
+  canvas {
+    width: 1750px !important;
+    height: 700px !important;
+    padding: 30px;
+  }
+</style>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="home.html">Webtech Coursework</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="CV.html">CV</a></li>
+        <li><a href="weather.html">Weather</a></li>
+        <li><a href="logout.php">logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  Stoke Longitude: <label id="lon"></label>
+  <br>
+  London Longitude: <label id="don"></label>
+
+  <canvas id="myChart"></canvas>
+  <canvas id="windChart"></canvas>
+  <canvas id="humidChart"></canvas>
+  <canvas id="doublechart"></canvas>
+
+  <select onchange="changetempChart(this)">
+    <optgroup label="Select Chart"></optgroup>
+    <option value="bar">Bar</option>
+    <option value="line">Line</option>
+    <option value="pie">Pie</option>
+  </select>
+
+  <select onchange="changewindChart(this)">
+    <optgroup label="Select Chart"></optgroup>
+    <option value="bar">Bar</option>
+    <option value="line">Line</option>
+    <option value="pie">Pie</option>
+  </select>
+
+  <select onchange="changehumidChart(this)">
+    <optgroup label="Select Chart"></optgroup>
+    <option value="bar">Bar</option>
+    <option value="line">Line</option>
+    <option value="pie">Pie</option>
+  </select>
+
+<script>
+  //TODO: Task 1
+  var daily = JSON.parse(dailydata_stoke);
+  document.getElementById('lon').innerHTML = daily.coord.lon;
+  var v = JSON.parse(dailydata_london);
+  document.getElementById('don').innerHTML = v.coord.lon;
+
+  //TODO: Task 2, 3 and 4
+  var forecast = JSON.parse(forecast_stoke);
+  this.dateList = forecast.list.map(list => {
+    return list.dt_txt;
+  });
+  var forecast2 = JSON.parse(forecast_london);
+  this.dateList2 = forecast2.list.map(list => {
+    return list.dt_txt;
+  });
+
+  this.temperatureList = forecast.list.map(list => {
+    return list.main.temp;
+  });
+
+  this.windList = forecast.list.map(list => {
+    return list.wind.speed;
+  })
+
+  this.humidList = forecast.list.map(list => {
+    return list.main.humidity;
+  })
+
+  this.temperatureList2 = forecast2.list.map(list => {
+    return list.main.temp;
+  });
+
+  var ctx = document.getElementById('myChart').getContext('2d');
+  this.chart1 = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: this.dateList,
+      datasets: [
+        {
+          label: "Temperature",
+          backgroundColor: "lightblue",
+          borderColor: "blue",
+          fill: false,
+          data: this.temperatureList
+        }
+      ]
+    }
+  })
+
+  function changetempChart(chartType) {
+    console.log(chartType.value);
+    chart1.destroy();
+
+    if (chartType.value === 'line') {
+      this.chart1 = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Temperature",
+              backgroundColor: "lightblue",
+              borderColor: "blue",
+              fill: false,
+              data: this.temperatureList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'bar') {
+      this.chart1 = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Temperature",
+              backgroundColor: "lightblue",
+              borderColor: "blue",
+              fill: false,
+              data: this.temperatureList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'pie') {
+      this.chart1 = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Temperature",
+              backgroundColor: "lightblue",
+              borderColor: "blue",
+              fill: false,
+              data: this.temperatureList
+            }
+          ]
+        }
+      })
+    }
+
+
+  }
+
+  var cwx = document.getElementById('windChart').getContext('2d');
+  this.chart2 = new Chart(cwx, {
+    type: "line",
+    data: {
+      labels: this.dateList,
+      datasets: [
+        {
+          label: "Wind",
+          backgroundColor: "lightgreen",
+          borderColor: "green",
+          fill: false,
+          data: this.windList
+        }
+      ]
+    }
+  })
+
+  function changewindChart(chartType) {
+    console.log(chartType.value);
+    chart2.destroy();
+
+    if (chartType.value === 'line') {
+      this.chart2 = new Chart(cwx, {
+        type: "line",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Wind",
+              backgroundColor: "lightgreen",
+              borderColor: "green",
+              fill: false,
+              data: this.windList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'bar') {
+      this.chart2 = new Chart(cwx, {
+        type: "bar",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Wind",
+              backgroundColor: "lightgreen",
+              borderColor: "green",
+              fill: false,
+              data: this.windList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'pie') {
+      this.chart2 = new Chart(cwx, {
+        type: "pie",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Wind",
+              backgroundColor: "lightgreen",
+              borderColor: "green",
+              fill: false,
+              data: this.windList
+            }
+          ]
+        }
+      })
+    }
+
+
+  }
+
+  var chx = document.getElementById('humidChart').getContext('2d');
+  this.chart3 = new Chart(chx, {
+    type: "line",
+    data: {
+      labels: this.dateList,
+      datasets: [
+        {
+          label: "Humidity",
+          backgroundColor: "pink",
+          borderColor: "red",
+          fill: false,
+          data: this.humidList
+        }
+      ]
+    }
+  })
+
+  function changehumidChart(chartType) {
+    console.log(chartType.value);
+    chart3.destroy();
+
+    if (chartType.value === 'line') {
+      this.chart3 = new Chart(chx, {
+        type: "line",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Humidity",
+              backgroundColor: "pink",
+              borderColor: "red",
+              fill: false,
+              data: this.humidList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'bar') {
+      this.chart3 = new Chart(chx, {
+        type: "bar",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Humidity",
+              backgroundColor: "pink",
+              borderColor: "red",
+              fill: false,
+              data: this.humidList
+            }
+          ]
+        }
+      })
+    }
+
+    if (chartType.value === 'pie') {
+      this.chart3 = new Chart(chx, {
+        type: "pie",
+        data: {
+          labels: this.dateList,
+          datasets: [
+            {
+              label: "Humidity",
+              backgroundColor: "pink",
+              borderColor: "red",
+              fill: false,
+              data: this.humidList
+            }
+          ]
+        }
+      })
+    }
+
+
+  }
+
+  var ctlx = document.getElementById('doublechart').getContext('2d');
+  this.chart = new Chart(ctlx, {
+    type: "bar",
+    data: {
+      labels: this.dateList2,
+      datasets: [
+        {
+          label: "Temperature",
+          backgroundColor: "green",
+          borderColor: "lightblue",
+          fill: false,
+          data: this.temperatureList
+        }
+        ,{
+          label: "London Temperature",
+          backgroundColor: "red",
+          borderColor: "red",
+          fill: false,
+          data: this.temperatureList2
+        }
+      ]
+    }
+  })
+</script>
+
+</body>
+
+</html>
